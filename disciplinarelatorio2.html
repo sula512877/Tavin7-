@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Painel de Disciplinas</title>
+
+  <!-- Ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, var(--sidebar-bg), var(--primary-bg));
+      color: #fff;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: var(--table-header-bg);
+      padding: 20px 30px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+      border-bottom: 2px solid #ccc;
+      letter-spacing: 1px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      padding: 40px;
+    }
+
+    .box {
+      background-color: var(--secondary-bg);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 15px rgba(0,0,0,0.3);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+
+    .box:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+    }
+
+    .box img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .box-title {
+      text-align: center;
+      padding: 15px;
+      font-size: 18px;
+      background-color: var(--sidebar-bg);
+      color: #f5f5f5;
+      border-top: 1px solid #444;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 14px;
+      color: #aaa;
+      border-top: 2px solid #ccc;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+  <link rel="stylesheet" href="styles.css">PAINEL DE DISCIPLINAS/RELATORIO</header>
+
+  <main class="grid">
+
+    <a href="relatoriomo1.html" class="box">
+      <img src="https://i.postimg.cc/wj4n7tj9/Imagem-do-Whats-App-de-2025-06-13-s-23-51-51-5debe04a.jpg" alt="Montagem e Manutenção 1">
+      <div class="box-title">Montagem e Manutenção I</div>
+    </a>
+
+    <a href="relatoriofun.html" class="box">
+      <img src="https://i.postimg.cc/q7CDqjFG/Imagem-do-Whats-App-de-2025-06-13-s-23-28-58-6c84a97c.jpg" alt="Fundamentos de Informática">
+      <div class="box-title">Fundamentos de Informática</div>
+    </a>
+
+    <a href="relatorioso.html" class="box">
+      <img src="https://i.postimg.cc/c48JvzwT/transferir.jpg" alt="Sistemas Operacionais">
+      <div class="box-title">Sistemas Operacionais</div>
+    </a>
+
+    <a href="relatoriomo2.html" class="box">
+      <img src="https://i.postimg.cc/W1hxpRZb/entenda-o-conceito-e-conheca-os-diferentes-tipos-post-rede-de-computadores-datastorage-4136.webp" alt="Montagem e Manutenção II">
+      <div class="box-title">Montagem e Manutenção II</div>
+    </a>
+
+    <a href="relatoriolo.html" class="box">
+      <img src="https://i.postimg.cc/L8PjZwHh/Imagem-do-Whats-App-de-2025-06-13-s-23-38-13-7ec24432.jpg" alt="Lógica de Programação">
+      <div class="box-title">Lógica de Programação</div>
+    </a>
+
+    <a href="relatoriois.html" class="box">
+      <img src="https://i.postimg.cc/9FSJpD4C/capa-sistemas-operacionais-conceito-estrutura.webp" alt="Introdução aos Sistemas">
+      <div class="box-title">Introdução aos Sistemas</div>
+    </a>
+
+  </main>
+
+  <footer>
+    © 2025 - Todos os direitos reservados | XBIUDERS MDD DO DEV
+  </footer>
+
+</body>
+</html>

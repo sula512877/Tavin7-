@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>X-BIU - MDD | Login</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #d0d0d1 0%, #c8c7c9 100%);
+    }
+    
+    .login-wrapper {
+      width: 100%;
+      max-width: 400px;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-container">
+      <h2>Sistema de Diário Eletrônico</h2>
+      
+      <form id="loginForm">
+        <div class="input-group">
+          <label for="usuario">Usuário:</label>
+          <input type="text" id="usuario" name="usuario" required>
+        </div>
+        
+        <div class="input-group">
+          <label for="senha">Senha:</label>
+          <input type="password" id="senha" name="senha" required>
+        </div>
+        
+        <button type="submit" class="btn" style="width: 100%; margin-top: 10px;">
+          Entrar
+        </button>
+      </form>
+      
+      <div style="text-align: center; margin-top: 20px; color: var(--text-secondary); font-size: 0.9rem;">
+        © 2025 - Sistema de Diário Eletrônico
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const usuario = document.getElementById('usuario').value;
+      const senha = document.getElementById('senha').value;
+      
+      // Validação simples (pode ser expandida)
+      if (usuario && senha) {
+        localStorage.setItem("logado", "true");
+        window.location.href = "telainicial.html";
+      } else {
+        alert('Por favor, preencha todos os campos.');
+      }
+    });
+  </script>
+</body>
+</html>
+

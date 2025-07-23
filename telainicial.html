@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <script>
+  if (localStorage.getItem("logado") !== "true") {
+    window.location.href = "login.html";
+  }
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard BIU-MDD</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <div class="sidebar">
+    <h2>Menu Principal</h2>
+    <a href="alunosincalunos.html"><i class="fas fa-user-graduate"></i> Alunos</a>
+    <a href="diario.html"><i class="fas fa-book"></i> Diário</a>
+    <a href="estatisticas.html"><i class="fas fa-chart-bar"></i> Estatísticas</a>
+    <a href="configprof.html"><i class="fas fa-cogs"></i> Configurações</a>
+    <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Sair</a>
+  </div>
+
+  <div class="main">
+    <div class="header">
+      <h1>Dashboard - Sistema de Diário Eletrônico</h1>
+      <div class="welcome">
+        <i class="fas fa-user-circle" style="font-size: 2rem; margin-right: 10px;"></i>
+        <span>Bem-vindo, Professor!</span>
+      </div>
+    </div>
+    
+    <div class="card">
+      <h2 style="color: var(--text-primary); margin-bottom: 15px;">
+        <i class="fas fa-graduation-cap" style="margin-right: 10px; color: var(--button-primary);"></i>
+        Bem-vindo ao Sistema de Diário Eletrônico!
+      </h2>
+      <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary);">
+        Desfrute da melhor experiência de um diário eletrônico! 
+        Não se esqueça de alimentar todas as informações de maneira correta para manter 
+        o controle acadêmico sempre atualizado.
+      </p>
+      
+      <div style="margin-top: 25px; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+        <div style="padding: 15px; background-color: var(--table-row-even); border-radius: 6px; text-align: center;">
+          <i class="fas fa-users" style="font-size: 2rem; color: var(--button-primary); margin-bottom: 10px;"></i>
+          <h4 style="margin: 0; color: var(--text-primary);">Gerenciar Alunos</h4>
+        </div>
+        <div style="padding: 15px; background-color: var(--table-row-even); border-radius: 6px; text-align: center;">
+          <i class="fas fa-clipboard-list" style="font-size: 2rem; color: var(--button-primary); margin-bottom: 10px;"></i>
+          <h4 style="margin: 0; color: var(--text-primary);">Controle de Frequência</h4>
+        </div>
+        <div style="padding: 15px; background-color: var(--table-row-even); border-radius: 6px; text-align: center;">
+          <i class="fas fa-star" style="font-size: 2rem; color: var(--button-primary); margin-bottom: 10px;"></i>
+          <h4 style="margin: 0; color: var(--text-primary);">Lançamento de Notas</h4>
+        </div>
+        <div style="padding: 15px; background-color: var(--table-row-even); border-radius: 6px; text-align: center;">
+          <i class="fas fa-chart-line" style="font-size: 2rem; color: var(--button-primary); margin-bottom: 10px;"></i>
+          <h4 style="margin: 0; color: var(--text-primary);">Relatórios</h4>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <footer class="footer">
+    <span>© 2025 - Todos os direitos reservados</span>
+    <span>XBIUDERS MDD DO DEV</span>
+  </footer>
+
+  <script>
+    function logout() {
+      localStorage.removeItem("logado");
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>
+

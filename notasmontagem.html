@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Notas Escolares</title>
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #166088;
+            --accent: #4fc3f7;
+            --background: #f5f9ff;
+            --text: #333333;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--secondary);
+        }
+        
+        .btn-success {
+            background-color: var(--success);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            opacity: 0.9;
+        }
+        
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            opacity: 0.9;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        th {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        input[type="number"] {
+            width: 60px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            text-align: center;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+        
+        .status-aprovado {
+            background-color: var(--success);
+        }
+        
+        .status-recuperacao {
+            background-color: var(--warning);
+        }
+        
+        .status-reprovado {
+            background-color: var(--danger);
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .stat-card h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--accent);
+            padding-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 10px 0;
+        }
+        
+        .stat-description {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .student-selector {
+            margin-bottom: 15px;
+        }
+        
+        select {
+            padding: 8px 15px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            width: 100%;
+            max-width: 300px;
+        }
+        
+        @media (max-width: 768px) {
+            th, td {
+                padding: 8px 10px;
+                font-size: 14px;
+            }
+            
+            input[type="number"] {
+                width: 50px;
+                padding: 5px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Sistema de Gerenciamento de Notas</h1>
+        
+        <div class="controls">
+            <button id="saveBtn" class="btn-primary">Salvar Notas</button>
+            <button id="loadBtn" class="btn-warning">Carregar Notas</button>
+            <button id="clearBtn" class="btn-danger">Limpar Tudo</button>
+            <button id="calcularBtn" class="btn-success">Calcular Médias</button>
+            <button id="exportPdfBtn" class="btn-primary">Exportar PDF</button>
+        </div>
+        
+        <table id="gradesTable">
+            <thead>
+                <tr>
+                    <th>Nome do Aluno</th>
+                    <th>Atividades<br></th>
+                    <th>Trabalhos<br></th>
+                    <th>Provas<br></th>
+                    <th>Prova Final<br></th>
+                    <th>Recuperação<br></th>
+                    <th>Média<br></th>
+                    <th>Situação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>ASAF ALCHAAR RAMALHO DE OLIVEIRA</td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="activity"></td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="work"></td>
+                    <td><input type="number" min="0" max="30" step="0.1" class="test"></td>
+                    <td><input type="number" min="0" max="40" step="0.1" class="final"></td>
+                    <td><input type="number" min="0" max="100" step="0.1" class="recovery"></td>
+                    <td class="average">-</td>
+                    <td class="status">-</td>
+                </tr>
+                <tr>
+                    <td>AYMAR FERREIRA TELES</td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="activity"></td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="work"></td>
+                    <td><input type="number" min="0" max="30" step="0.1" class="test"></td>
+                    <td><input type="number" min="0" max="40" step="0.1" class="final"></td>
+                    <td><input type="number" min="0" max="100" step="0.1" class="recovery"></td>
+                    <td class="average">-</td>
+                    <td class="status">-</td>
+                </tr>
+                <tr>
+                    <td>CARLOS GOMES HAUEISEN FREIRE</td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="activity"></td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="work"></td>
+                    <td><input type="number" min="0" max="30" step="0.1" class="test"></td>
+                    <td><input type="number" min="0" max="40" step="0.1" class="final"></td>
+                    <td><input type="number" min="0" max="100" step="0.1" class="recovery"></td>
+                    <td class="average">-</td>
+                    <td class="status">-</td>
+                </tr>
+                <tr>
+                    <td>GUILHERME AUGUSTO RODRIGUES NASCIMENTO</td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="activity"></td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="work"></td>
+                    <td><input type="number" min="0" max="30" step="0.1" class="test"></td>
+                    <td><input type="number" min="0" max="40" step="0.1" class="final"></td>
+                    <td><input type="number" min="0" max="100" step="0.1" class="recovery"></td>
+                    <td class="average">-</td>
+                    <td class="status">-</td>
+                </tr>
+                <tr>
+                    <td>GUSTAVO HENRIQUE RODRIGUES NASCIMENTO</td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="activity"></td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="work"></td>
+                    <td><input type="number" min="0" max="30" step="0.1" class="test"></td>
+                    <td><input type="number" min="0" max="40" step="0.1" class="final"></td>
+                    <td><input type="number" min="0" max="100" step="0.1" class="recovery"></td>
+                    <td class="average">-</td>
+                    <td class="status">-</td>
+                </tr>
+                <tr>
+                    <td>JOÃO CARLOS MACIEL DOS SANTOS</td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="activity"></td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="work"></td>
+                    <td><input type="number" min="0" max="30" step="0.1" class="test"></td>
+                    <td><input type="number" min="0" max="40" step="0.1" class="final"></td>
+                    <td><input type="number" min="0" max="100" step="0.1" class="recovery"></td>
+                    <td class="average">-</td>
+                    <td class="status">-</td>
+                </tr>
+                <tr>
+                    <td>JULIO KENNEDY SILVA SOUZA</td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="activity"></td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="work"></td>
+                    <td><input type="number" min="0" max="30" step="0.1" class="test"></td>
+                    <td><input type="number" min="0" max="40" step="0.1" class="final"></td>
+                    <td><input type="number" min="0" max="100" step="0.1" class="recovery"></td>
+                    <td class="average">-</td>
+                    <td class="status">-</td>
+                </tr>
+                <tr>
+                    <td>LUIS FELIPE ALVES PEREIRA</td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="activity"></td>
+                    <td><input type="number" min="0" max="15" step="0.1" class="work"></td>
+                    <td><input type="number" min="0" max="30" step="0.1" class="test"></td>
+                    <td><input type="number" min="0" max="40" step="0.1" class="final"></td>
+                    <td><input type="number" min="0" max="100" step="0.1" class="recovery"></td>
+                    <td class="average">-</td>
+                    <td class="status">-</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="stats-container" id="statsContainer">
+            <div class="stat-card">
+                <h3>Estatísticas Gerais</h3>
+                <p class="stat-value" id="totalStudents">8 alunos</p>
+                <p class="stat-description">Total de alunos na turma</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Média da Turma</h3>
+                <p class="stat-value" id="classAverage">-</p>
+                <p class="stat-description">Média geral de todas as atividades</p>
+            </div>
+            
+            <div class="stat-card">
+                <h3>Situação dos Alunos</h3>
+                <p class="stat-value" id="approvedStudents">-</p>
+                <p class="stat-description">Alunos aprovados</p>
+                <p class="stat-value" id="recoveryStudents">-</p>
+                <p class="stat-description">Alunos em recuperação</p>
+                <p class="stat-value" id="failedStudents">-</p>
+                <p class="stat-description">Alunos reprovados</p>
+            </div>
+            
+            <div class="student-selector">
+                <h3>Estatísticas por Aluno</h3>
+                <select id="studentSelector">
+                    <option value="">Selecione um aluno</option>
+                    <option value="0">ASAF ALCHAAR RAMALHO DE OLIVEIRA</option>
+                    <option value="1">AYMAR FERREIRA TELES</option>
+                    <option value="2">CARLOS GOMES HAUEISEN FREIRE</option>
+                    <option value="3">GUILHERME AUGUSTO RODRIGUES NASCIMENTO</option>
+                    <option value="4">GUSTAVO HENRIQUE RODRIGUES NASCIMENTO</option>
+                    <option value="5">JOÃO CARLOS MACIEL DOS SANTOS</option>
+                    <option value="6">JULIO KENNEDY SILVA SOUZA</option>
+                    <option value="7">LUIS FELIPE ALVES PEREIRA</option>
+                </select>
+            </div>
+            
+            <div class="stat-card" id="studentStats">
+                <h3>Detalhes do Aluno</h3>
+                <p>Selecione um aluno para ver suas estatísticas detalhadas.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Salva todas as notas dos alunos no localStorage do navegador
+         * Coleta os dados de cada linha da tabela e armazena como array de objetos
+         * Exibe alerta confirmando o salvamento
+         */
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            const students = [];
+            const rows = document.querySelectorAll('#gradesTable tbody tr');
+            
+            rows.forEach(row => {
+                const student = {
+                    name: row.cells[0].textContent,
+                    activity: row.querySelector('.activity').value,
+                    work: row.querySelector('.work').value,
+                    test: row.querySelector('.test').value,
+                    final: row.querySelector('.final').value,
+                    recovery: row.querySelector('.recovery').value,
+                    average: row.querySelector('.average').textContent,
+                    status: row.querySelector('.status').textContent
+                };
+                students.push(student);
+            });
+            
+            localStorage.setItem('studentGrades', JSON.stringify(students));
+            alert('Notas salvas com sucesso!');
+        });
+        
+         /**
+         * Carrega notas salvas anteriormente do localStorage
+         * Verifica se existem dados salvos antes de tentar carregar
+         * Preenche os campos da tabela com os valores salvos
+         * Atualiza estatísticas após carregar
+         * Exibe alerta confirmando o carregamento ou informando se não há dados
+         */
+        document.getElementById('loadBtn').addEventListener('click', function() {
+            const savedGrades = localStorage.getItem('studentGrades');
+            
+            if (savedGrades) {
+                const students = JSON.parse(savedGrades);
+                const rows = document.querySelectorAll('#gradesTable tbody tr');
+                
+                students.forEach((student, index) => {
+                    if (rows[index]) {
+                        rows[index].querySelector('.activity').value = student.activity;
+                        rows[index].querySelector('.work').value = student.work;
+                        rows[index].querySelector('.test').value = student.test;
+                        rows[index].querySelector('.final').value = student.final;
+                        rows[index].querySelector('.recovery').value = student.recovery;
+                        rows[index].querySelector('.average').textContent = student.average;
+                        rows[index].querySelector('.status').textContent = student.status;
+                    }
+                });
+                
+                alert('Notas carregadas com sucesso!');
+                updateStatistics();
+            } else {
+                alert('Nenhuma nota salva encontrada!');
+            }
+        });
+        
+        /**
+         * Limpa todos os campos de notas da tabela
+         * Pede confirmação antes de apagar (ação irreversível)
+         * Reseta todos os campos de input e valores calculados
+         * Atualiza estatísticas após limpar
+         * Exibe alerta confirmando a limpeza
+         */
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            if (confirm('Tem certeza que deseja limpar todas as notas? Isso não pode ser desfeito.')) {
+                const inputs = document.querySelectorAll('#gradesTable tbody input');
+                const averages = document.querySelectorAll('.average');
+                const statuses = document.querySelectorAll('.status');
+                
+                inputs.forEach(input => {
+                    input.value = '';
+                });
+                
+                averages.forEach(avg => {
+                    avg.textContent = '-';
+                });
+                
+                statuses.forEach(status => {
+                    status.textContent = '-';
+                });
+                
+                updateStatistics();
+                alert('Todas as notas foram limpas!');
+            }
+        });
+        
+        /**
+         * Calcula médias ponderadas para todos os alunos
+         * Considera pesos diferentes para cada tipo de avaliação:
+         *   - Atividades: 30%
+         *   - Trabalhos: 20% 
+         *   - Provas: 30%
+         *   - Prova Final: 20%
+         * Verifica situação do aluno (aprovado, recuperação ou reprovado)
+         * Trata casos especiais de alunos em recuperação
+         * Atualiza estatísticas após calcular
+         * Exibe alerta confirmando cálculo
+         */
+        document.getElementById('calcularBtn').addEventListener('click', function() {
+            const rows = document.querySelectorAll('#gradesTable tbody tr');
+            
+            rows.forEach(row => {
+                const activity = parseFloat(row.querySelector('.activity').value) || 0;
+                const work = parseFloat(row.querySelector('.work').value) || 0;
+                const test = parseFloat(row.querySelector('.test').value) || 0;
+                const final = parseFloat(row.querySelector('.final').value) || 0;
+                const recovery = parseFloat(row.querySelector('.recovery').value) || 0;
+                
+                // Cálculo da média ponderada (ajuste os pesos conforme necessário)
+                const average = (activity * 0.3 + work * 0.2 + test * 0.3 + final * 0.2).toFixed(1);
+                
+                row.querySelector('.average').textContent = average;
+                
+                let status;
+                let statusClass;
+                
+                // Se tiver nota de recuperação
+                if (recovery > 0) {
+                    const finalAverage = ((parseFloat(average) * 0.6 + recovery * 0.4)).toFixed(1);
+                    if (finalAverage >= 5.5) {
+                        status = `<span class="status-indicator status-aprovado"></span>Aprovado após recuperação (${finalAverage})`;
+                        statusClass = 'aprovado-recuperacao';
+                    } else {
+                        status = `<span class="status-indicator status-reprovado"></span>Reprovado após recuperação (${finalAverage})`;
+                        statusClass = 'reprovado';
+                    }
+                } else {
+                    if (average >= 6) {
+                        status = `<span class="status-indicator status-aprovado"></span>Aprovado`;
+                        statusClass = 'aprovado';
+                    } else if (average >= 4) {
+                        status = `<span class="status-indicator status-recuperacao"></span>Recuperação`;
+                        statusClass = 'recuperacao';
+                    } else {
+                        status = `<span class="status-indicator status-reprovado"></span>Reprovado`;
+                        statusClass = 'reprovado';
+                    }
+                }
+                
+                row.querySelector('.status').innerHTML = status;
+                row.querySelector('.status').className = `status ${statusClass}`;
+            });
+            
+            updateStatistics();
+            alert('Médias calculadas com sucesso!');
+        });
+        
+        /**
+         * Atualiza as estatísticas da turma com base nas notas atuais
+         * Calcula:
+         *   - Média geral da turma
+         *   - Contagem de alunos aprovados
+         *   - Contagem de alunos em recuperação
+         *   - Contagem de alunos reprovados
+         * Atualiza os elementos HTML com os valores calculados
+         */
+        function updateStatistics() {
+            const rows = document.querySelectorAll('#gradesTable tbody tr');
+            const averages = [];
+            let approved = 0;
+            let recovery = 0;
+            let failed = 0;
+            
+            // Coletar dados
+            rows.forEach(row => {
+                const averageText = row.querySelector('.average').textContent;
+                
+                if (averageText !== '-') {
+                    averages.push(parseFloat(averageText));
+                    
+                    const statusClass = row.querySelector('.status').className;
+                    
+                    if (statusClass.includes('aprovado')) approved++;
+                    else if (statusClass.includes('recuperacao')) recovery++;
+                    else if (statusClass.includes('reprovado')) failed++;
+                }
+            });
+            
+            // Calcular médias
+            if (averages.length > 0) {
+                const sum = averages.reduce((a, b) => a + b, 0);
+                const avg = (sum / averages.length).toFixed(1);
+                document.getElementById('classAverage').textContent = avg;
+            } else {
+                document.getElementById('classAverage').textContent = '-';
+            }
+            
+            // Atualizar contadores
+            document.getElementById('approvedStudents').textContent = approved;
+            document.getElementById('recoveryStudents').textContent = recovery;
+            document.getElementById('failedStudents').textContent = failed;
+        }
+        
+        /**
+         * Mostra estatísticas detalhadas para o aluno selecionado
+         * Inclui:
+         *   - Notas individuais por categoria
+         *   - Média atual
+         *   - Situação atual
+         *   - Gráfico de evolução das notas
+         * Atualiza o card de estatísticas sempre que um novo aluno é selecionado
+         */
+        document.getElementById('studentSelector').addEventListener('change', function() {
+            const index = this.value;
+            const statsContainer = document.getElementById('studentStats');
+            
+            if (index === '') {
+                statsContainer.innerHTML = '<h3>Detalhes do Aluno</h3><p>Selecione um aluno para ver suas estatísticas detalhadas.</p>';
+                return;
+            }
+            
+            const row = document.querySelectorAll('#gradesTable tbody tr')[index];
+            
+            if (row) {
+                const name = row.cells[0].textContent;
+                const activity = row.querySelector('.activity').value || '0';
+                const work = row.querySelector('.work').value || '0';
+                const test = row.querySelector('.test').value || '0';
+                const final = row.querySelector('.final').value || '0';
+                const recovery = row.querySelector('.recovery').value || '0';
+                const average = row.querySelector('.average').textContent;
+                const status = row.querySelector('.status').textContent.replace(/[\n\r]+|[\s]{2,}/g, ' ').trim();
+                
+                let content = `
+                    <h3>${name}</h3>
+                    <div style="margin-top: 15px;">
+                        <p><strong>Atividades:</strong> ${activity}</p>
+                        <p><strong>Trabalhos:</strong> ${work}</p>
+                        <p><strong>Provas:</strong> ${test}</p>
+                        <p><strong>Prova Final:</strong> ${final}</p>
+                        ${recovery > 0 ? `<p><strong>Recuperação:</strong> ${recovery}</p>` : ''}
+                        <p><strong>Média:</strong> ${average !== '-' ? average : 'Não calculada'}</p>
+                        <p><strong>Situação:</strong> ${status !== '-' ? status : 'Não definida'}</p>
+                    </div>
+                    <div style="margin-top: 20px;">
+                        <p><strong>Evolução:</strong></p>
+                        <div style="display: flex; align-items: flex-end; margin-top: 10px;">
+                            <div style="flex: 1; text-align: center;">
+                                <div style="height: ${(activity / 15* 100)}px; background-color: var(--accent);"></div>
+                                <small>Atividades</small>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div style="height: ${(work / 15* 100)}px; background-color: var(--accent);"></div>
+                                <small>Trabalhos</small>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div style="height: ${(test / 30 * 100)}px; background-color: var(--accent);"></div>
+                                <small>Provas</small>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div style="height: ${(final / 40* 100)}px; background-color: var(--accent);"></div>
+                                <small>Final</small>
+                            </div>
+                            ${recovery > 0 ? `
+                            <div style="flex: 1; text-align: center;">
+                                <div style="height: ${(recovery / 100 * 100)}px; background-color: var(--accent);"></div>
+                                <small>Recuperação</small>
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+                
+                statsContainer.innerHTML = content;
+            }
+        });
+        
+        /**
+         * Gera um relatório PDF com todas as notas da turma
+         * Inclui:
+         *   - Título e data de emissão
+         *   - Tabela completa com notas dos alunos
+         *   - Colunas para cada tipo de avaliação
+         *   - Situação final de cada aluno
+         * Usa a biblioteca jsPDF com autotable para formatação
+         * Salva automaticamente o PDF no dispositivo do usuário
+         * Nome do arquivo inclui data atual
+         */
+        document.getElementById('exportPdfBtn').addEventListener('click', function() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Título
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(20);
+            doc.text('Relatório de Notas da Turma', 105, 15, {align: 'center'});
+            
+            // Data
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+            doc.text(`Data: ${new Date().toLocaleDateString()}`, 105, 25, {align: 'center'});
+            
+            // Table data
+            const rows = [];
+            document.querySelectorAll('#gradesTable tbody tr').forEach(row => {
+                rows.push([
+                    row.cells[0].textContent,
+                    row.querySelector('.activity').value || '-',
+                    row.querySelector('.work').value || '-',
+                    row.querySelector('.test').value || '-',
+                    row.querySelector('.final').value || '-',
+                    row.querySelector('.recovery').value || '-',
+                    row.querySelector('.average').textContent,
+                    row.querySelector('.status').textContent.replace(/\n/g, ' ')
+                ]);
+            });
+            
+            // Generate table
+            doc.autoTable({
+                head: [['Aluno', 'Ativ.', 'Trab.', 'Prova', 'Final', 'Recup.', 'Média', 'Situação']],
+                body: rows,
+                startY: 30,
+                styles: {
+                    fontSize: 9,
+                    cellPadding: 2,
+                },
+                headStyles: {
+                    fillColor: [74, 111, 165], // Cor primary do tema
+                    textColor: 255,
+                    fontStyle: 'bold'
+                }
+            });
+            
+            // Save PDF
+            doc.save(`notas_turma_${new Date().toISOString().slice(0,10)}.pdf`);
+        });
+
+        /**
+         * GERA RELATÓRIO PDF
+         * Exporta todas as notas para um arquivo PDF com:
+         * - Título e data
+         * - Tabela completa de notas
+         * - Situação de cada aluno
+         * 
+         * Funcionamento:
+         * 1. Cria novo documento PDF
+         * 2. Adiciona cabeçalho com título e data
+         * 3. Coleta dados das notas da tabela HTML
+         * 4. Gera tabela formatada usando autoTable
+         * 5. Salva PDF com nome contendo data atual
+         * 
+         * @event click - Disparado pelo botão "Exportar PDF"
+         * @uses jsPDF - Biblioteca para gerar PDFs
+         * @uses autoTable - Plugin para tabelas formatadas
+         */
+        document.getElementById('exportPdfBtn').addEventListener('click', function() {
+            // Inicializa novo documento PDF
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Adiciona título centralizado
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(20);
+            doc.text('Relatório de Notas da Turma', 105, 15, {align: 'center'});
+            
+            // Adiciona data atual
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(12);
+            doc.text(`Data: ${new Date().toLocaleDateString()}`, 105, 25, {align: 'center'});
+            
+            // Prepara dados da tabela
+            const rows = [];
+            document.querySelectorAll('#gradesTable tbody tr').forEach(row => {
+                rows.push([
+                    row.cells[0].textContent, // Nome
+                    row.querySelector('.activity').value || '-', // Atividades
+                    row.querySelector('.work').value || '-', // Trabalhos  
+                    row.querySelector('.test').value || '-', // Provas
+                    row.querySelector('.final').value || '-', // Final
+                    row.querySelector('.recovery').value || '-', // Recuperação
+                    row.querySelector('.average').textContent, // Média
+                    row.querySelector('.status').textContent.replace(/\n/g, ' ') // Situação
+                ]);
+            });
+            
+            // Gera tabela formatada
+            doc.autoTable({
+                head: [['Aluno', 'Ativ.', 'Trab.', 'Prova', 'Final', 'Recup.', 'Média', 'Situação']],
+                body: rows,
+                startY: 30,
+                styles: {
+                    fontSize: 9,  // Tamanho da fonte
+                    cellPadding: 2 // Espaçamento interno
+                },
+                headStyles: {
+                    fillColor: [74, 111, 165], // Cor de fundo do cabeçalho
+                    textColor: 255, // Cor do texto
+                    fontStyle: 'bold' // Negrito
+                }
+            });
+            
+        });
+
+        // Atualizar estatísticas sempre que uma nota for modificada
+        const inputs = document.querySelectorAll('#gradesTable tbody input');
+        inputs.forEach(input => {
+            input.addEventListener('change', function() {
+                updateStatistics();
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Relatório de Conteúdo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #1b2c52, #e2e6ec);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #1b2c52;
+      color: white;
+      width: 100%;
+      padding: 20px 0;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+    }
+
+    main {
+      margin: 40px auto;
+      padding: 20px;
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 1000px;
+    }
+
+    label {
+      font-size: 1.2em;
+      display: block;
+      margin-bottom: 8px;
+      color: #1b2c52;
+      font-weight: bold;
+    }
+
+    textarea, input[type="file"] {
+      width: 90%;
+      margin-bottom: 20px;
+    }
+
+    textarea {
+      height: 200px;
+      padding: 12px;
+      font-size: 1em;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      resize: vertical;
+      background-color: #fdfdfd;
+    }
+
+    .btn {
+      background-color: #1b2c52;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 20px;
+    }
+
+    #previewImage img {
+      max-width: 100%;
+      margin-top: 10px;
+    }
+
+    .assinatura-professor {
+      margin-top: 40px;
+      font-weight: bold;
+    }
+
+    .linha-assinatura {
+      margin-top: 5px;
+      border-top: 1px solid #000;
+      width: 300px;
+    }
+
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: #122941;
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    @media print {
+      .btn, #imagem, label[for="imagem"] {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+  <link rel="stylesheet" href="styles.css">Relatório de Conteúdo</header>
+
+  <main id="areaRelatorio">
+    <label for="conteudo">Conteúdo Trabalhado em Sala:</label>
+    <textarea id="conteudo" placeholder="Descreva o conteúdo aplicado, tópicos, atividades..."></textarea>
+
+    <label for="imagem">Anexar Imagem (opcional):</label>
+    <input type="file" id="imagem" accept="image/*" onchange="mostrarImagem(event)" />
+    <div id="previewImage"></div>
+
+    <div class="assinatura-professor" id="assinaturaArea">
+      <br><br>
+      Assinatura do Professor:<br><br>
+      <div class="linha-assinatura"></div>
+    </div>
+
+    <button class="btn" onclick="gerarPDF()">Gerar PDF do Relatório</button>
+  </main>
+
+  <footer class="footer">
+    <span>© 2025 - Todos os direitos reservados</span>
+    <span>XBIULDERS MDD DO DEV</span>
+  </footer>
+
+  <script>
+    let imagemBase64 = "";
+
+    function mostrarImagem(event) {
+      const file = event.target.files[0];
+      const preview = document.getElementById("previewImage");
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          imagemBase64 = e.target.result;
+          preview.innerHTML = `<img src="${imagemBase64}" alt="Imagem Anexada" />`;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function gerarPDF() {
+      const texto = document.getElementById("conteudo").value;
+      const assinaturaHTML = document.getElementById("assinaturaArea").innerHTML;
+      const imagemHTML = imagemBase64 ? `<img src="${imagemBase64}" style="max-width:100%; margin-top:20px;">` : "";
+
+      const container = document.createElement("div");
+      container.innerHTML = `
+        <h2>Relatório de Conteúdo</h2>
+        <p><strong>Conteúdo Trabalhado:</strong></p>
+        <p>${texto.replace(/\n/g, "<br>")}</p>
+        ${imagemHTML}
+        <div class="assinatura-professor">
+          <br><br>
+          Assinatura do Professor:<br><br>
+          <div class="linha-assinatura"></div>
+        </div>
+      `;
+
+      html2pdf().from(container).set({
+        margin: 10,
+        filename: 'relatorio-conteudo.pdf',
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      }).save();
+    }
+  </script>
+</body>
+</html>
+
